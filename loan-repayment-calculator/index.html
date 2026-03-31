@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loan Repayment Time Calculator</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <div class="header__title">
+          <h1>Loan Repayment Time Calculator</h1>
+          <p>Enter your loan, interest, and planned monthly repayment.</p>
+        </div>
+      </header>
+
+      <section class="card layout">
+        <div class="controls">
+          <div class="control" data-control="loanAmount">
+            <div class="control__label">
+              <span>Loan amount</span>
+              <span class="pill" id="loanAmountPill">₹ 10,00,000</span>
+            </div>
+            <input
+              id="loanAmount"
+              class="range"
+              type="range"
+              min="0"
+              max="50000000"
+              step="1"
+              value="1000000"
+            />
+            <div class="control__bottom">
+              <label class="inline">
+                <span class="inline__hint">Exact value</span>
+                <input id="loanAmountInput" class="number" type="number" min="0" step="1" value="1000000" />
+              </label>
+            </div>
+          </div>
+
+          <div class="control" data-control="interestRate">
+            <div class="control__label">
+              <span>Interest rate (p.a.)</span>
+              <span class="pill" id="interestRatePill">6.5%</span>
+            </div>
+            <input
+              id="interestRate"
+              class="range"
+              type="range"
+              min="0"
+              max="30"
+              step="0.01"
+              value="6.5"
+            />
+            <div class="control__bottom">
+              <label class="inline">
+                <span class="inline__hint">Exact value</span>
+                <input
+                  id="interestRateInput"
+                  class="number"
+                  type="text"
+                  inputmode="decimal"
+                  value="6.5"
+                />
+              </label>
+            </div>
+          </div>
+
+          <div class="control" data-control="monthlyPayment">
+            <div class="control__label">
+              <span>Planned monthly repayment</span>
+              <span class="pill" id="monthlyPaymentPill">₹ 19,566</span>
+            </div>
+            <input
+              id="monthlyPayment"
+              class="range"
+              type="range"
+              min="0"
+              max="5000000"
+              step="1"
+              value="19566"
+            />
+            <div class="control__bottom">
+              <label class="inline">
+                <span class="inline__hint">Exact value</span>
+                <input id="monthlyPaymentInput" class="number" type="number" min="0" step="1" value="19566" />
+              </label>
+            </div>
+          </div>
+
+          <div class="results">
+            <div class="results__grid" role="table" aria-label="Summary results">
+              <div class="row">
+                <div class="row__k">Monthly interest rate</div>
+                <div class="row__v" id="monthlyRate">—</div>
+              </div>
+              <div class="row">
+                <div class="row__k">Total principal repaid</div>
+                <div class="row__v" id="totalPrincipal">₹ 0</div>
+              </div>
+              <div class="row">
+                <div class="row__k">Total interest</div>
+                <div class="row__v" id="totalInterest">₹ 0</div>
+              </div>
+              <div class="row">
+                <div class="row__k">Total amount paid</div>
+                <div class="row__v" id="totalPaid">₹ 0</div>
+              </div>
+            </div>
+
+            <div class="bigResult" aria-label="Repayment time">
+              <div class="bigResult__v">Repayment time</div>
+              <div class="bigResult__v" id="repaymentTime">—</div>
+            </div>
+
+            <div class="notice" id="notice" hidden>
+              <span id="noticeText"></span>
+            </div>
+
+            <div class="details">
+              <div class="details__title">
+                <span>Your amortization details (year/month)</span>
+                <button class="details__badge" id="detailsToggle" type="button" aria-label="Toggle amortization details">
+                  +
+                </button>
+              </div>
+              <div class="details__body" id="detailsBody">
+                <div class="details__empty">Adjust inputs to see a breakdown.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="visual">
+          <div class="donutCard">
+            <div class="donutLegend">
+              <label class="legend">
+                <span class="dot dot--principal" aria-hidden="true"></span>
+                <span>Principal amount</span>
+              </label>
+              <label class="legend">
+                <span class="dot dot--interest" aria-hidden="true"></span>
+                <span>Interest amount</span>
+              </label>
+            </div>
+
+            <div class="donutWrap" aria-label="Principal vs interest donut chart">
+              <div class="donut" id="donut"></div>
+              <div class="donutCenter">
+                <div class="donutCenter__k">Total paid</div>
+                <div class="donutCenter__v" id="donutTotal">₹ 0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="miniStats">
+            <div class="mini">
+              <div class="mini__k">Principal</div>
+              <div class="mini__v" id="miniPrincipal">₹ 0</div>
+            </div>
+            <div class="mini">
+              <div class="mini__k">Interest</div>
+              <div class="mini__v" id="miniInterest">₹ 0</div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+
