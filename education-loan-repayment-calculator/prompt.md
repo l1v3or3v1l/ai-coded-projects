@@ -1,117 +1,100 @@
-Prompt:
-Build a React + TypeScript (TSX) Education Loan Repayment Calculator for the Indian market (₹ rupees). Use only inline styles and a single injected <style> tag for media queries — no CSS files, no Tailwind, no external component libraries.
+# **Project Specification: Education Loan Repayment Calculator**
 
-DESIGN
-Dark theme throughout:
+## **1. Overview**
+Build a **React + TypeScript (TSX)** calculator specifically for the Indian education loan market. The application must be a single-file solution with no external dependencies (CSS/Tailwind/Libraries), relying entirely on inline styles and a single injected `<style>` tag.
 
-Background: #0d1117, Card: #1c2330, Border: #30363d
-Accent/gold: #f0a500, Teal: #2dd4bf, Amber: #f59e0b, Red: #f87171
-Blue for principal: #3b82f6, Green for repayment interest: #10b981
-Fonts: DM Sans (UI) + DM Mono (numbers) — load from Google Fonts via @import inside the style tag
-Centered layout, maxWidth: 700px, responsive to mobile. Inputs collapse to 1-column below 480px.
+---
 
+## **2. Design & Aesthetics**
+### **Theme: Dark Mode**
+| Element | Hex Code |
+| :--- | :--- |
+| **Background** | `#0d1117` |
+| **Card** | `#1c2330` |
+| **Border** | `#30363d` |
+| **Accent (Gold)** | `#f0a500` |
+| **Teal** | `#2dd4bf` |
+| **Amber** | `#f59e0b` |
+| **Red** | `#f87171` |
+| **Blue (Principal)** | `#3b82f6` |
+| **Green (Interest)** | `#10b981` |
 
-INPUTS (all reactive — no submit button, recalculate on every keystroke)
+### **Typography & Layout**
+* **Fonts:** DM Sans (UI) and DM Mono (Numbers) loaded via `@import` from Google Fonts.
+* **Width:** Maximum `700px`, centered.
+* **Responsiveness:** Inputs collapse to 1-column below `480px`.
 
-Loan Principal (₹ prefix, default ₹15,00,000)
-Annual Interest Rate (% p.a. suffix, default 9.5)
-Moratorium Period (months suffix, default 48)
-Monthly EMI (₹ prefix, default ₹20,000)
-Toggle — "Service interest during moratorium" (default OFF)
+---
 
-OFF: interest compounds monthly onto principal during moratorium
-ON: borrower pays simple interest each month; principal unchanged
+## **3. Logic & Formulas**
+### **Monthly Rate**
+$$r = \frac{\text{Annual Rate}}{12 \times 100}$$
 
+### **Moratorium Phase**
+* **Toggle OFF (Compounding):**
+    $$P_{effective} = P \times (1 + r)^{\text{moratoriumMonths}}$$
+    $$\text{Moratorium Interest} = P_{effective} - P$$
+* **Toggle ON (Simple Interest):**
+    $$\text{Moratorium Interest} = P \times r \times \text{moratoriumMonths}$$
+    $$P_{effective} = P$$
 
+### **Repayment Phase**
+* **Months to repay ($n$):**
+    $$n = \frac{-\log(1 - \frac{P_{effective} \times r}{\text{EMI}})}{\log(1 + r)}$$
+* **Schedule:** Iterate month-by-month to calculate interest vs. principal reduction, then roll up into yearly rows.
 
-All inputs sit in a 2-column grid inside a dark card section titled "LOAN PARAMETERS". The toggle spans full width and changes border color (teal when ON, dark when OFF).
+---
 
-CORE LOGIC
-r = annualRate / 12 / 100   // monthly rate
+## **4. Component Architecture**
+### **TypeScript Interfaces**
+```typescript
+interface CalcResult {
+  monthsToRepay: number;
+  effectivePrincipal: number;
+  moratoriumInterest: number;
+  repaymentInterest: number;
+  totalOutflow: number;
+  monthlyInterest: number;
+  error?: string;
+  schedule: YearRow[];
+}
 
-// Moratorium phase
-if toggle OFF:
-  effectivePrincipal = P × (1 + r)^moratoriumMonths   // compound capitalised
-  moratoriumInterest = effectivePrincipal - P
-if toggle ON:
-  moratoriumInterest = P × r × moratoriumMonths        // simple, paid monthly
-  effectivePrincipal = P                               // unchanged
+interface YearRow {
+  year: number;
+  open: number;
+  princPaid: number;
+  intPaid: number;
+  close: number;
+}
 
-// Repayment phase
-monthlyInterest = effectivePrincipal × r
-// ERROR if EMI ≤ monthlyInterest (loan never repays)
+interface LegendItem {
+  label: string;
+  value: string;
+  color: string;
+  pct: number;
+}
+```
 
-// Months to repay:
-n = -log(1 - effectivePrincipal × r / EMI) / log(1 + r)
-months = ceil(n)
+### **Component List**
+* `NumInput`: Gold border on focus, ₹ prefix or % suffix.
+* `Toggle`: Animated sliding pill.
+* `Stat`: Dark card with large mono values.
+* `StackedBar`: Proportional horizontal bar with legend.
+* `YearTable`: Scrollable, expandable (first 5 rows default).
+* `Section`: Wrapper with gold title and divider.
 
-// Build full month-by-month schedule:
-for each month:
-  interestCharge = balance × r
-  principalPayment = min(EMI - interestCharge, balance)
-  balance = max(balance - principalPayment, 0)
+---
 
-// Roll up monthly schedule into year-by-year rows
+## **5. Features & UI Elements**
+1.  **Reactive Inputs:** Real-time calculation on every keystroke.
+2.  **Moratorium Banner:** Dynamic color change (Amber if compounding, Teal if servicing).
+3.  **Error Handling:** Red banner if $EMI \le \text{Monthly Interest}$.
+4.  **Number Formatting:** * **Full:** `toLocaleString("en-IN")`.
+    * **Short:** Use **L** (Lakhs) or **Cr** (Crores) for values $\ge 1,00,000$.
+5.  **Amortization Table:** "Paid Off ✓" indicator in teal when balance hits zero.
 
-OUTPUTS (all update live)
-1. Moratorium Alert Banner (shown when moratorium > 0)
+---
 
-If toggle OFF (amber border): show how much was capitalised and new effective principal
-If toggle ON (teal border): show monthly interest cost and total moratorium outflow
-
-2. Error Banner (red, shown when EMI ≤ monthly interest)
-
-Message: "EMI must exceed monthly interest of ₹X to reduce principal"
-
-3. Repayment Summary — 4 stat cards in a 2×2 grid:
-
-Duration (e.g. "8y 4m" + "100 months total") — teal
-Effective Principal (post-moratorium amount) — blue
-Repayment Interest (interest paid during repayment only) — green
-Lifetime Interest (moratorium + repayment interest, shown as % of principal) — amber
-
-4. Stacked Bar — "Total Outflow Breakdown"
-
-Horizontal bar split into 3 colored segments: Principal (blue) / Moratorium Interest (amber) / Repayment Interest (green)
-Show percentage labels inside segments if segment > 12% wide
-Below bar: legend with colored squares, label, and ₹ value (use short format: L for lakhs, Cr for crores)
-
-5. Year-by-Year Amortization Table
-
-Columns: Year | Opening Balance | Principal Paid | Interest Paid | Closing Balance
-Show only first 5 rows by default; "Show all N years" expand button below
-Last row closing balance shows "Paid Off ✓" in teal when < ₹1
-Table scrolls horizontally on mobile (overflowX: auto, minWidth: 380px)
-
-
-NUMBER FORMATTING
-
-Full format: ₹ + toLocaleString("en-IN") rounded to nearest rupee
-Short format: ≥ 1 Cr → ₹X.XX Cr, ≥ 1 L → ₹X.XX L, else full format
-
-
-COMPONENT STRUCTURE
-
-NumInput — number input with optional ₹ prefix or suffix, gold border on focus
-Toggle — animated sliding pill toggle
-Stat — dark card with uppercase label, large mono value, small subtitle
-StackedBar — proportional horizontal bar + legend
-YearTable — scrollable table with expand/collapse
-Section — dark card wrapper with gold uppercase section title + bottom border divider
-Main LoanCalculator default export — holds all state, runs useMemo for calc
-
-
-TYPESCRIPT
-Define these interfaces:
-
-CalcResult — all computed output fields plus optional error and monthlyInterest
-YearRow — { year, open, princPaid, intPaid, close }
-LegendItem — { label, value, color, pct }
-Typed props for every sub-component
-
-
-HEADER
-Icon badge (🎓 emoji in a gold-bordered rounded square) + h1 "Education Loan Repayment Calculator" with clamp(16px, 5vw, 22px) font size. Subtitle: "Moratorium-aware · Indian Rupee · Live" in muted color below.
-
-FOOTER
-Small centered muted text: "Assumes fixed rate & equal monthly instalments. For informational purposes only."
+## **6. Header & Footer**
+* **Header:** 🎓 emoji in gold border + `h1` Title + Muted Subtitle.
+* **Footer:** Small muted disclaimer text regarding fixed rates and informational purpose.
