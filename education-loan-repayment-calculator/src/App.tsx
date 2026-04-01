@@ -35,6 +35,7 @@ interface LegendItem {
 
 const C = {
   bg:         "#0d1117",
+  surface:    "#161b22",
   card:       "#1c2330",
   border:     "#30363d",
   accent:     "#f0a500",
@@ -66,10 +67,16 @@ const fmtShort = (n: number): string => {
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
-const FieldLabel = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ marginBottom: 6, fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
-    color: C.muted, textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif" }}>
-    {children}
+const FieldLabel = ({ children, sub }: { children: React.ReactNode; sub?: string }) => (
+  <div style={{ marginBottom: 6 }}>
+    <span style={{
+      fontSize: 11, fontWeight: 600, letterSpacing: "0.08em",
+      color: C.muted, textTransform: "uppercase",
+      fontFamily: "'DM Sans', sans-serif",
+    }}>
+      {children}
+    </span>
+    {sub && <span style={{ fontSize: 10, color: C.muted, marginLeft: 6 }}>{sub}</span>}
   </div>
 );
 
@@ -87,21 +94,29 @@ const NumInput = ({ value, onChange, prefix, suffix, step = "any", min = 0 }: Nu
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 8,
-      background: C.bg, border: `1.5px solid ${focused ? C.accent : C.border}`,
-      borderRadius: 10, padding: "10px 13px", transition: "border-color 0.2s",
+      background: C.bg,
+      border: `1.5px solid ${focused ? C.accent : C.border}`,
+      borderRadius: 10, padding: "10px 13px",
+      transition: "border-color 0.2s",
     }}>
       {prefix && (
-        <span style={{ color: C.accent, fontWeight: 700, fontSize: 15,
-          fontFamily: "'DM Mono', monospace", flexShrink: 0 }}>{prefix}</span>
+        <span style={{ color: C.accent, fontWeight: 700, fontSize: 15, fontFamily: "'DM Mono', monospace", flexShrink: 0 }}>
+          {prefix}
+        </span>
       )}
       <input
-        type="number" value={value} min={min} step={step}
+        type="number"
+        value={value}
+        min={min}
+        step={step}
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
-          flex: 1, minWidth: 0, background: "transparent", border: "none", outline: "none",
-          color: C.text, fontSize: 15, fontFamily: "'DM Mono', monospace", fontWeight: 500,
+          flex: 1, minWidth: 0, background: "transparent",
+          border: "none", outline: "none",
+          color: C.text, fontSize: 15,
+          fontFamily: "'DM Mono', monospace", fontWeight: 500,
         }}
       />
       {suffix && (
@@ -119,19 +134,26 @@ interface ToggleProps {
 }
 
 const Toggle = ({ checked, onChange, label, sub }: ToggleProps) => (
-  <div onClick={() => onChange(!checked)} style={{
-    display: "flex", alignItems: "center", gap: 12, cursor: "pointer",
-    background: checked ? C.tealSoft : C.card,
-    border: `1.5px solid ${checked ? C.teal : C.border}`,
-    borderRadius: 10, padding: "12px 14px", transition: "all 0.25s", userSelect: "none",
-  }}>
+  <div
+    onClick={() => onChange(!checked)}
+    style={{
+      display: "flex", alignItems: "center", gap: 12, cursor: "pointer",
+      background: checked ? C.tealSoft : C.card,
+      border: `1.5px solid ${checked ? C.teal : C.border}`,
+      borderRadius: 10, padding: "12px 14px",
+      transition: "all 0.25s", userSelect: "none",
+    }}
+  >
     <div style={{
       width: 38, height: 21, borderRadius: 11, flexShrink: 0,
-      background: checked ? C.teal : C.border, position: "relative", transition: "background 0.25s",
+      background: checked ? C.teal : C.border,
+      position: "relative", transition: "background 0.25s",
     }}>
       <div style={{
         width: 15, height: 15, borderRadius: "50%", background: "#fff",
-        position: "absolute", top: 3, left: checked ? 19 : 4, transition: "left 0.25s",
+        position: "absolute", top: 3,
+        left: checked ? 19 : 4,
+        transition: "left 0.25s",
         boxShadow: "0 1px 4px rgba(0,0,0,0.4)",
       }} />
     </div>
@@ -142,27 +164,48 @@ const Toggle = ({ checked, onChange, label, sub }: ToggleProps) => (
   </div>
 );
 
-interface StatProps { label: string; value: string; color?: string; sub?: string; }
+interface StatProps {
+  label: string;
+  value: string;
+  color?: string;
+  sub?: string;
+}
 
 const Stat = ({ label, value, color, sub }: StatProps) => (
-  <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 16px" }}>
-    <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase",
-      letterSpacing: "0.08em", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, marginBottom: 6 }}>
+  <div style={{
+    background: C.card, border: `1px solid ${C.border}`,
+    borderRadius: 12, padding: "14px 16px",
+  }}>
+    <div style={{
+      fontSize: 10, color: C.muted, textTransform: "uppercase",
+      letterSpacing: "0.08em", fontFamily: "'DM Sans', sans-serif",
+      fontWeight: 600, marginBottom: 6,
+    }}>
       {label}
     </div>
-    <div style={{ fontSize: 20, fontWeight: 700, color: color ?? C.text,
-      fontFamily: "'DM Mono', monospace", letterSpacing: "-0.02em", wordBreak: "break-word" }}>
+    <div style={{
+      fontSize: 20, fontWeight: 700,
+      color: color ?? C.text,
+      fontFamily: "'DM Mono', monospace",
+      letterSpacing: "-0.02em",
+      wordBreak: "break-word",
+    }}>
       {value}
     </div>
     {sub && <div style={{ fontSize: 10, color: C.muted, marginTop: 4, lineHeight: 1.4 }}>{sub}</div>}
   </div>
 );
 
-interface StackedBarProps { principal: number; morInt: number; repInt: number; }
+interface StackedBarProps {
+  principal: number;
+  morInt: number;
+  repInt: number;
+}
 
 const StackedBar = ({ principal, morInt, repInt }: StackedBarProps) => {
   const total = principal + morInt + repInt;
   if (total === 0) return null;
+
   const pctOf = (v: number) => ((v / total) * 100).toFixed(1);
   const segments: LegendItem[] = [
     { label: "Principal",           value: principal, color: C.principal, pct: pctOf(principal) },
@@ -174,15 +217,23 @@ const StackedBar = ({ principal, morInt, repInt }: StackedBarProps) => {
     <div>
       <div style={{ display: "flex", height: 26, borderRadius: 8, overflow: "hidden", gap: 2 }}>
         {segments.map((s) => (
-          <div key={s.label} title={`${s.label}: ${fmt(s.value)} (${s.pct}%)`} style={{
-            width: `${s.pct}%`, background: s.color, transition: "width 0.5s ease",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 10, fontWeight: 700, color: "#000", overflow: "hidden", flexShrink: 0,
-          }}>
+          <div
+            key={s.label}
+            title={`${s.label}: ${fmt(s.value)} (${s.pct}%)`}
+            style={{
+              width: `${s.pct}%`, background: s.color,
+              transition: "width 0.5s ease",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 10, fontWeight: 700, color: "#000", overflow: "hidden",
+              flexShrink: 0,
+            }}
+          >
             {parseFloat(s.pct) > 12 ? `${s.pct}%` : ""}
           </div>
         ))}
       </div>
+
+      {/* Legend — wraps on small screens */}
       <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
         {segments.map((s) => (
           <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -198,37 +249,55 @@ const StackedBar = ({ principal, morInt, repInt }: StackedBarProps) => {
   );
 };
 
-const YearTable = ({ rows }: { rows: YearRow[] }) => {
+interface YearTableProps {
+  rows: YearRow[];
+}
+
+const YearTable = ({ rows }: YearTableProps) => {
   const [expanded, setExpanded] = useState(false);
   const visible = expanded ? rows : rows.slice(0, 5);
+
   const th: React.CSSProperties = {
-    padding: "9px 10px", textAlign: "right", borderBottom: `1px solid ${C.border}`,
-    color: C.muted, fontWeight: 600, fontSize: 10, letterSpacing: "0.04em",
-    textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif", whiteSpace: "nowrap",
+    padding: "9px 10px", textAlign: "right",
+    borderBottom: `1px solid ${C.border}`,
+    color: C.muted, fontWeight: 600,
+    fontSize: 10, letterSpacing: "0.04em",
+    textTransform: "uppercase",
+    fontFamily: "'DM Sans', sans-serif",
+    whiteSpace: "nowrap",
   };
-  const tdBase: React.CSSProperties = {
-    padding: "8px 10px", textAlign: "right", fontSize: 12,
-    fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap",
-  };
+
+  const td = (extra?: React.CSSProperties): React.CSSProperties => ({
+    padding: "8px 10px", textAlign: "right",
+    fontSize: 12, fontFamily: "'DM Mono', monospace",
+    whiteSpace: "nowrap",
+    ...extra,
+  });
+
   return (
     <div>
-      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" as any }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 380 }}>
           <thead>
             <tr>
-              {["Year","Opening","Principal","Interest","Closing"].map((h) => (
-                <th key={h} style={th}>{h}</th>
-              ))}
+              <th style={th}>Year</th>
+              <th style={th}>Opening</th>
+              <th style={th}>Principal</th>
+              <th style={th}>Interest</th>
+              <th style={th}>Closing</th>
             </tr>
           </thead>
           <tbody>
             {visible.map((r, i) => (
               <tr key={i} style={{ background: i % 2 !== 0 ? "rgba(255,255,255,0.02)" : "transparent" }}>
-                <td style={{ ...tdBase, color: C.accent, fontWeight: 700 }}>{r.year}</td>
-                <td style={{ ...tdBase, color: C.textSub }}>{fmt(r.open)}</td>
-                <td style={{ ...tdBase, color: C.principal }}>{fmt(r.princPaid)}</td>
-                <td style={{ ...tdBase, color: C.repInt }}>{fmt(r.intPaid)}</td>
-                <td style={{ ...tdBase, color: r.close < 1 ? C.teal : C.textSub, fontWeight: r.close < 1 ? 700 : 400 }}>
+                <td style={td({ color: C.accent, fontWeight: 700 })}>{r.year}</td>
+                <td style={td({ color: C.textSub })}>{fmt(r.open)}</td>
+                <td style={td({ color: C.principal })}>{fmt(r.princPaid)}</td>
+                <td style={td({ color: C.repInt })}>{fmt(r.intPaid)}</td>
+                <td style={td({
+                  color: r.close < 1 ? C.teal : C.textSub,
+                  fontWeight: r.close < 1 ? 700 : 400,
+                })}>
                   {r.close < 1 ? "Paid Off ✓" : fmt(r.close)}
                 </td>
               </tr>
@@ -236,13 +305,16 @@ const YearTable = ({ rows }: { rows: YearRow[] }) => {
           </tbody>
         </table>
       </div>
+
       {rows.length > 5 && (
         <button
           onClick={() => setExpanded(!expanded)}
           style={{
-            marginTop: 10, background: "transparent", border: `1px solid ${C.border}`,
+            marginTop: 10, background: "transparent",
+            border: `1px solid ${C.border}`,
             color: C.muted, borderRadius: 8, padding: "8px 16px",
-            cursor: "pointer", fontSize: 12, width: "100%", transition: "all 0.2s",
+            cursor: "pointer", fontSize: 12, width: "100%",
+            transition: "all 0.2s",
           }}
           onMouseEnter={(e) => {
             (e.currentTarget as HTMLButtonElement).style.borderColor = C.accent;
@@ -260,15 +332,18 @@ const YearTable = ({ rows }: { rows: YearRow[] }) => {
   );
 };
 
+// ─── Section wrapper ──────────────────────────────────────────────────────────
+
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div style={{
     background: C.card, border: `1px solid ${C.border}`,
     borderRadius: 14, padding: "18px 16px", marginBottom: 14,
   }}>
     <div style={{
-      fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", color: C.accent,
-      textTransform: "uppercase", fontFamily: "'DM Sans', sans-serif",
-      marginBottom: 14, paddingBottom: 10, borderBottom: `1px solid ${C.border}`,
+      fontSize: 10, fontWeight: 700, letterSpacing: "0.1em",
+      color: C.accent, textTransform: "uppercase",
+      fontFamily: "'DM Sans', sans-serif", marginBottom: 14,
+      paddingBottom: 10, borderBottom: `1px solid ${C.border}`,
     }}>
       {title}
     </div>
@@ -276,68 +351,55 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   </div>
 );
 
-interface AlertBannerProps { color: string; bg: string; icon: string; title: string; sub: string; }
-
-const AlertBanner = ({ color, bg, icon, title, sub }: AlertBannerProps) => (
-  <div style={{
-    background: bg, border: `1.5px solid ${color}`, borderRadius: 12,
-    padding: "13px 15px", marginBottom: 14,
-    display: "flex", alignItems: "flex-start", gap: 10,
-  }}>
-    <span style={{ fontSize: 17, flexShrink: 0 }}>{icon}</span>
-    <div>
-      <div style={{ color, fontWeight: 600, fontSize: 13 }}>{title}</div>
-      <div style={{ color: C.muted, fontSize: 11, marginTop: 3 }}>{sub}</div>
-    </div>
-  </div>
-);
-
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function LoanCalculator() {
-  const [principal,  setPrincipal]  = useState<number | string>(1500000);
-  const [rate,       setRate]       = useState<number | string>(9.5);
-  const [moratorium, setMoratorium] = useState<number | string>(48);
-  const [serviced,   setServiced]   = useState<boolean>(false);
-  const [emi,        setEmi]        = useState<number | string>(20000);
+  const [principal, setPrincipal]   = useState<number | string>(1500000);
+  const [rate,      setRate]        = useState<number | string>(9.5);
+  const [moratorium,setMoratorium]  = useState<number | string>(48);
+  const [serviced,  setServiced]    = useState<boolean>(false);
+  const [emi,       setEmi]         = useState<number | string>(20000);
 
   const calc = useMemo<CalcResult | null>(() => {
-    const P   = parseFloat(String(principal))  || 0;
-    const ann = parseFloat(String(rate))       || 0;
-    const mor = parseInt(String(moratorium))   || 0;
-    const EMI = parseFloat(String(emi))        || 0;
+    const P   = parseFloat(String(principal)) || 0;
+    const ann = parseFloat(String(rate))      || 0;
+    const mor = parseInt(String(moratorium))  || 0;
+    const EMI = parseFloat(String(emi))       || 0;
     const r   = ann / 12 / 100;
 
     if (P <= 0 || ann <= 0 || EMI <= 0) return null;
 
-    let morInterest = 0, effP = P;
+    // Moratorium interest
+    let morInterest = 0;
+    let effP = P;
+
     if (mor > 0) {
       if (serviced) {
-        morInterest = P * r * mor;
+        morInterest = P * r * mor;   // simple, paid out; principal unchanged
+        effP = P;
       } else {
-        effP = P * Math.pow(1 + r, mor);
+        effP = P * Math.pow(1 + r, mor);  // compounded onto principal
         morInterest = effP - P;
       }
     }
 
     const monthlyInterest = effP * r;
     if (EMI <= monthlyInterest) {
-      return {
-        error: `EMI must exceed monthly interest of ${fmt(monthlyInterest)}.`,
-        monthlyInterest, morInterest, effectivePrincipal: effP,
-        repaymentInterest: 0, lifetimeInterest: 0,
-        months: 0, years: 0, remMonths: 0, yearRows: [], morMonthlyInterest: P * r,
-      };
+      return { error: `EMI must exceed monthly interest of ${fmt(monthlyInterest)}.`, monthlyInterest, morInterest, effectivePrincipal: effP, repaymentInterest: 0, lifetimeInterest: 0, months: 0, years: 0, remMonths: 0, yearRows: [], morMonthlyInterest: P * r };
     }
 
+    // Months to repay: n = -log(1 - effP*r/EMI) / log(1+r)
     const n      = -Math.log(1 - (effP * r) / EMI) / Math.log(1 + r);
     const months = Math.ceil(n);
     const years  = Math.floor(months / 12);
     const remM   = months % 12;
 
-    interface M { intCharge: number; princPay: number; balance: number; }
-    let balance = effP, totalInt = 0;
-    const monthly: M[] = [];
+    // Amortisation schedule
+    interface MonthData { intCharge: number; princPay: number; balance: number; }
+    let balance = effP;
+    let totalInt = 0;
+    const monthly: MonthData[] = [];
+
     for (let i = 0; i < months; i++) {
       const intCharge = balance * r;
       const princPay  = Math.min(EMI - intCharge, balance);
@@ -347,8 +409,11 @@ export default function LoanCalculator() {
       if (balance < 0.01) break;
     }
 
+    // Roll up to years
     const yearRows: YearRow[] = [];
-    let mIdx = 0, yr = 1;
+    let mIdx = 0;
+    let yr   = 1;
+
     while (mIdx < monthly.length) {
       const open = yr === 1 ? effP : yearRows[yr - 2].close;
       let princPaid = 0, intPaid = 0;
@@ -361,177 +426,198 @@ export default function LoanCalculator() {
     }
 
     return {
-      morInterest, effectivePrincipal: effP,
-      repaymentInterest: totalInt, lifetimeInterest: morInterest + totalInt,
-      months, years, remMonths: remM, yearRows, morMonthlyInterest: P * r,
+      morInterest,
+      effectivePrincipal: effP,
+      repaymentInterest: totalInt,
+      lifetimeInterest: morInterest + totalInt,
+      months,
+      years,
+      remMonths: remM,
+      yearRows,
+      morMonthlyInterest: P * r,
     };
   }, [principal, rate, moratorium, serviced, emi]);
 
-  const P   = parseFloat(String(principal)) || 0;
-  const mor = parseInt(String(moratorium))  || 0;
+  // ─── Responsive grid helpers ───────────────────────────────────────────────
+  // We use a CSS-in-JS approach with a media-query polyfill via a style tag injected once.
 
   return (
     <div style={{
-      minHeight: "100vh", background: C.bg, color: C.text,
+      minHeight: "100vh",
+      background: C.bg,
+      color: C.text,
       fontFamily: "'DM Sans', sans-serif",
-      padding: "20px 20px 60px", boxSizing: "border-box",
+      padding: "20px 12px 60px",
+      boxSizing: "border-box",
     }}>
+      {/* Fonts + responsive helpers */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap');
-        *, *::before, *::after { box-sizing: border-box; }
+        * { box-sizing: border-box; }
         body { margin: 0; }
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button { opacity: 0.3; }
-
-        /* ── Layout: side-by-side on wide screens ── */
-        .lc-layout {
-          display: grid;
-          grid-template-columns: minmax(290px, 390px) 1fr;
-          gap: 16px;
-          align-items: start;
-          width: 100%;
-        }
-        .lc-col { display: flex; flex-direction: column; }
-
-        /* Input field pairs */
-        .lc-inputs {
+        .lc-grid-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 12px;
         }
-        .lc-full { grid-column: 1 / -1; }
-
-        /* Stats row */
-        .lc-stats {
+        .lc-grid-4 {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: 1fr 1fr;
           gap: 10px;
         }
-
-        /* ≤ 860px: stack everything single-column; stats 2-across */
-        @media (max-width: 860px) {
-          .lc-layout { grid-template-columns: 1fr; }
-          .lc-stats  { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        /* ≤ 440px: inputs single-column too */
-        @media (max-width: 440px) {
-          .lc-inputs { grid-template-columns: 1fr; }
+        .lc-full { grid-column: 1 / -1; }
+        @media (max-width: 480px) {
+          .lc-grid-2 { grid-template-columns: 1fr; }
+          .lc-grid-4 { grid-template-columns: 1fr 1fr; }
         }
       `}</style>
 
       {/* ── Header ── */}
-      <div style={{ maxWidth: 1400, margin: "0 auto 20px" }}>
+      <div style={{ maxWidth: 700, margin: "0 auto 22px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: 9, flexShrink: 0,
+            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
             background: C.accentSoft, border: `1.5px solid ${C.accent}`,
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17,
-          }}>🎓</div>
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16,
+          }}>
+            🎓
+          </div>
           <h1 style={{
-            margin: 0,
-            fontSize: "clamp(14px, 2vw, 22px)",
+            margin: 0, fontSize: "clamp(16px, 5vw, 22px)",
             fontWeight: 700, letterSpacing: "-0.02em", color: C.text,
           }}>
-            Education Loan Repayment Calculator
+            Education Loan Calculator
           </h1>
         </div>
-        <p style={{ margin: 0, fontSize: 12, color: C.muted, paddingLeft: 46 }}>
+        <p style={{ margin: 0, fontSize: 12, color: C.muted, paddingLeft: 44 }}>
           Moratorium-aware · Indian Rupee · Live
         </p>
       </div>
 
-      {/* ── Body ── */}
-      <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-        <div className="lc-layout">
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
 
-          {/* ════ LEFT: Inputs ════ */}
-          <div className="lc-col">
-            <Section title="Loan Parameters">
-              <div className="lc-inputs">
+        {/* ── Loan Parameters ── */}
+        <Section title="Loan Parameters">
+          <div className="lc-grid-2">
+            <div>
+              <FieldLabel>Principal</FieldLabel>
+              <NumInput value={principal} onChange={setPrincipal} prefix="₹" step="10000" />
+            </div>
+            <div>
+              <FieldLabel>Annual Rate</FieldLabel>
+              <NumInput value={rate} onChange={setRate} suffix="% p.a." step="0.1" />
+            </div>
+            <div>
+              <FieldLabel>Moratorium</FieldLabel>
+              <NumInput value={moratorium} onChange={setMoratorium} suffix="months" step="1" />
+            </div>
+            <div>
+              <FieldLabel>Monthly EMI</FieldLabel>
+              <NumInput value={emi} onChange={setEmi} prefix="₹" step="500" />
+            </div>
+            <div className="lc-full">
+              <Toggle
+                checked={serviced}
+                onChange={setServiced}
+                label="Service interest during moratorium"
+                sub={serviced
+                  ? "Pay interest monthly — principal stays unchanged."
+                  : "Interest compounds onto principal (default)."}
+              />
+            </div>
+          </div>
+        </Section>
+
+        {/* ── Error ── */}
+        {calc?.error && (
+          <div style={{
+            background: C.redSoft, border: `1.5px solid ${C.red}`,
+            borderRadius: 12, padding: "13px 15px", marginBottom: 14,
+            display: "flex", alignItems: "flex-start", gap: 10,
+          }}>
+            <span style={{ fontSize: 17, flexShrink: 0 }}>⚠️</span>
+            <div>
+              <div style={{ color: C.red, fontWeight: 600, fontSize: 13 }}>{calc.error}</div>
+              <div style={{ color: C.muted, fontSize: 11, marginTop: 3 }}>
+                Increase EMI above {fmt((calc.monthlyInterest ?? 0) + 1)} to start reducing the principal.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {calc && !calc.error && (
+          <>
+            {/* ── Moratorium Alert ── */}
+            {parseInt(String(moratorium)) > 0 && calc.morInterest > 0 && (
+              <div style={{
+                background: serviced ? C.tealSoft : C.amberSoft,
+                border: `1.5px solid ${serviced ? C.teal : C.amber}`,
+                borderRadius: 12, padding: "13px 15px", marginBottom: 14,
+                display: "flex", alignItems: "flex-start", gap: 10,
+              }}>
+                <span style={{ fontSize: 17, flexShrink: 0 }}>{serviced ? "✅" : "📈"}</span>
                 <div>
-                  <FieldLabel>Principal</FieldLabel>
-                  <NumInput value={principal} onChange={setPrincipal} prefix="₹" step="10000" />
+                  <div style={{ color: serviced ? C.teal : C.amber, fontWeight: 600, fontSize: 13 }}>
+                    {serviced
+                      ? `Paying ${fmt(calc.morMonthlyInterest)}/mo keeps principal at ${fmt(parseFloat(String(principal)))}`
+                      : `${fmt(calc.morInterest)} capitalised — effective loan ${fmtShort(calc.effectivePrincipal)}`}
+                  </div>
+                  <div style={{ color: C.muted, fontSize: 11, marginTop: 3 }}>
+                    {serviced
+                      ? `Total moratorium outflow: ${fmt(calc.morInterest)}`
+                      : `${((calc.morInterest / (parseFloat(String(principal)) || 1)) * 100).toFixed(1)}% added to your original loan amount.`}
+                  </div>
                 </div>
-                <div>
-                  <FieldLabel>Annual Rate</FieldLabel>
-                  <NumInput value={rate} onChange={setRate} suffix="% p.a." step="0.1" />
-                </div>
-                <div>
-                  <FieldLabel>Moratorium</FieldLabel>
-                  <NumInput value={moratorium} onChange={setMoratorium} suffix="months" step="1" />
-                </div>
-                <div>
-                  <FieldLabel>Monthly EMI</FieldLabel>
-                  <NumInput value={emi} onChange={setEmi} prefix="₹" step="500" />
-                </div>
-                <div className="lc-full">
-                  <Toggle
-                    checked={serviced} onChange={setServiced}
-                    label="Service interest during moratorium"
-                    sub={serviced
-                      ? "Pay interest monthly — principal stays unchanged."
-                      : "Interest compounds onto principal (default)."}
-                  />
-                </div>
+              </div>
+            )}
+
+            {/* ── Summary Stats ── */}
+            <Section title="Repayment Summary">
+              <div className="lc-grid-4">
+                <Stat
+                  label="Duration"
+                  value={`${calc.years}y ${calc.remMonths}m`}
+                  color={C.teal}
+                  sub={`${calc.months} months total`}
+                />
+                <Stat
+                  label="Eff. Principal"
+                  value={fmtShort(calc.effectivePrincipal)}
+                  color={C.principal}
+                  sub={parseInt(String(moratorium)) > 0 && !serviced ? `+${fmtShort(calc.morInterest)} added` : "No capitalisation"}
+                />
+                <Stat
+                  label="Repayment Interest"
+                  value={fmtShort(calc.repaymentInterest)}
+                  color={C.repInt}
+                  sub="Post-moratorium interest"
+                />
+                <Stat
+                  label="Lifetime Interest"
+                  value={fmtShort(calc.lifetimeInterest)}
+                  color={C.amber}
+                  sub={`${((calc.lifetimeInterest / (parseFloat(String(principal)) || 1)) * 100).toFixed(1)}% of principal`}
+                />
               </div>
             </Section>
 
-            {calc?.error && (
-              <AlertBanner
-                icon="⚠️" color={C.red} bg={C.redSoft}
-                title={calc.error}
-                sub={`Increase EMI above ${fmt((calc.monthlyInterest ?? 0) + 1)} to start reducing the principal.`}
+            {/* ── Stacked Bar ── */}
+            <Section title="Total Outflow Breakdown">
+              <StackedBar
+                principal={parseFloat(String(principal))}
+                morInt={calc.morInterest}
+                repInt={calc.repaymentInterest}
               />
-            )}
+            </Section>
 
-            {calc && !calc.error && mor > 0 && calc.morInterest > 0 && (
-              <AlertBanner
-                icon={serviced ? "✅" : "📈"}
-                color={serviced ? C.teal : C.amber}
-                bg={serviced ? C.tealSoft : C.amberSoft}
-                title={serviced
-                  ? `Paying ${fmt(calc.morMonthlyInterest)}/mo keeps principal at ${fmt(P)}`
-                  : `${fmt(calc.morInterest)} capitalised — effective loan ${fmtShort(calc.effectivePrincipal)}`}
-                sub={serviced
-                  ? `Total moratorium outflow: ${fmt(calc.morInterest)}`
-                  : `${((calc.morInterest / (P || 1)) * 100).toFixed(1)}% added to your original loan amount.`}
-              />
-            )}
-          </div>
+            {/* ── Year Table ── */}
+            <Section title="Year-by-Year Amortization">
+              <YearTable rows={calc.yearRows} />
+            </Section>
+          </>
+        )}
 
-          {/* ════ RIGHT: Results ════ */}
-          {calc && !calc.error && (
-            <div className="lc-col">
-              <Section title="Repayment Summary">
-                <div className="lc-stats">
-                  <Stat label="Duration"
-                    value={`${calc.years}y ${calc.remMonths}m`} color={C.teal}
-                    sub={`${calc.months} months total`} />
-                  <Stat label="Eff. Principal"
-                    value={fmtShort(calc.effectivePrincipal)} color={C.principal}
-                    sub={mor > 0 && !serviced ? `+${fmtShort(calc.morInterest)} added` : "No capitalisation"} />
-                  <Stat label="Repayment Interest"
-                    value={fmtShort(calc.repaymentInterest)} color={C.repInt}
-                    sub="Post-moratorium interest" />
-                  <Stat label="Lifetime Interest"
-                    value={fmtShort(calc.lifetimeInterest)} color={C.amber}
-                    sub={`${((calc.lifetimeInterest / (P || 1)) * 100).toFixed(1)}% of principal`} />
-                </div>
-              </Section>
-
-              <Section title="Total Outflow Breakdown">
-                <StackedBar principal={P} morInt={calc.morInterest} repInt={calc.repaymentInterest} />
-              </Section>
-
-              <Section title="Year-by-Year Amortization">
-                <YearTable rows={calc.yearRows} />
-              </Section>
-            </div>
-          )}
-        </div>
-
-        <p style={{ textAlign: "center", fontSize: 10, color: C.muted, marginTop: 8, lineHeight: 1.6 }}>
+        <p style={{ textAlign: "center", fontSize: 10, color: C.muted, margin: "8px 0 0", lineHeight: 1.6 }}>
           Assumes fixed rate & equal monthly instalments. For informational purposes only.
         </p>
       </div>
