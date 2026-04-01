@@ -100,7 +100,8 @@ const NumInput = ({ value, onChange, prefix, suffix, step = "any", min = 0 }: Nu
       transition: "border-color 0.2s",
     }}>
       {prefix && (
-        <span style={{ color: C.accent, fontWeight: 700, fontSize: 15, fontFamily: "'DM Mono', monospace", flexShrink: 0 }}>
+        <span style={{ color: C.accent, fontWeight: 700, fontSize: 15,
+          fontFamily: "'DM Mono', monospace", flexShrink: 0 }}>
           {prefix}
         </span>
       )}
@@ -233,7 +234,6 @@ const StackedBar = ({ principal, morInt, repInt }: StackedBarProps) => {
         ))}
       </div>
 
-      {/* Legend — wraps on small screens */}
       <div style={{ display: "flex", gap: 12, marginTop: 12, flexWrap: "wrap" }}>
         {segments.map((s) => (
           <div key={s.label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -276,7 +276,7 @@ const YearTable = ({ rows }: YearTableProps) => {
 
   return (
     <div>
-      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+      <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" as any }}>
         <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 380 }}>
           <thead>
             <tr>
@@ -332,8 +332,6 @@ const YearTable = ({ rows }: YearTableProps) => {
   );
 };
 
-// ─── Section wrapper ──────────────────────────────────────────────────────────
-
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div style={{
     background: C.card, border: `1px solid ${C.border}`,
@@ -369,16 +367,15 @@ export default function LoanCalculator() {
 
     if (P <= 0 || ann <= 0 || EMI <= 0) return null;
 
-    // Moratorium interest
     let morInterest = 0;
     let effP = P;
 
     if (mor > 0) {
       if (serviced) {
-        morInterest = P * r * mor;   // simple, paid out; principal unchanged
+        morInterest = P * r * mor;
         effP = P;
       } else {
-        effP = P * Math.pow(1 + r, mor);  // compounded onto principal
+        effP = P * Math.pow(1 + r, mor);
         morInterest = effP - P;
       }
     }
@@ -388,13 +385,11 @@ export default function LoanCalculator() {
       return { error: `EMI must exceed monthly interest of ${fmt(monthlyInterest)}.`, monthlyInterest, morInterest, effectivePrincipal: effP, repaymentInterest: 0, lifetimeInterest: 0, months: 0, years: 0, remMonths: 0, yearRows: [], morMonthlyInterest: P * r };
     }
 
-    // Months to repay: n = -log(1 - effP*r/EMI) / log(1+r)
     const n      = -Math.log(1 - (effP * r) / EMI) / Math.log(1 + r);
     const months = Math.ceil(n);
     const years  = Math.floor(months / 12);
     const remM   = months % 12;
 
-    // Amortisation schedule
     interface MonthData { intCharge: number; princPay: number; balance: number; }
     let balance = effP;
     let totalInt = 0;
@@ -409,7 +404,6 @@ export default function LoanCalculator() {
       if (balance < 0.01) break;
     }
 
-    // Roll up to years
     const yearRows: YearRow[] = [];
     let mIdx = 0;
     let yr   = 1;
@@ -438,9 +432,6 @@ export default function LoanCalculator() {
     };
   }, [principal, rate, moratorium, serviced, emi]);
 
-  // ─── Responsive grid helpers ───────────────────────────────────────────────
-  // We use a CSS-in-JS approach with a media-query polyfill via a style tag injected once.
-
   return (
     <div style={{
       minHeight: "100vh",
@@ -450,7 +441,6 @@ export default function LoanCalculator() {
       padding: "20px 12px 60px",
       boxSizing: "border-box",
     }}>
-      {/* Fonts + responsive helpers */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap');
         * { box-sizing: border-box; }
@@ -486,7 +476,7 @@ export default function LoanCalculator() {
             margin: 0, fontSize: "clamp(16px, 5vw, 22px)",
             fontWeight: 700, letterSpacing: "-0.02em", color: C.text,
           }}>
-            Education Loan Calculator
+            Education Loan Repayment Calculator
           </h1>
         </div>
         <p style={{ margin: 0, fontSize: 12, color: C.muted, paddingLeft: 44 }}>
@@ -584,7 +574,9 @@ export default function LoanCalculator() {
                   label="Eff. Principal"
                   value={fmtShort(calc.effectivePrincipal)}
                   color={C.principal}
-                  sub={parseInt(String(moratorium)) > 0 && !serviced ? `+${fmtShort(calc.morInterest)} added` : "No capitalisation"}
+                  sub={parseInt(String(moratorium)) > 0 && !serviced
+                    ? `+${fmtShort(calc.morInterest)} added`
+                    : "No capitalisation"}
                 />
                 <Stat
                   label="Repayment Interest"
