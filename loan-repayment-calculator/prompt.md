@@ -1,6 +1,6 @@
 Build a complete dark-mode loan repayment calculator website using plain HTML, CSS, and vanilla JavaScript (no frameworks). Create 3 files: index.html, styles.css, script.js.
 
-Project goal:
+Project goal:  
 Given:
 1) Loan Amount
 2) Interest rate (p.a.)
